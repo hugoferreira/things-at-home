@@ -40,7 +40,7 @@ int repeat = 5;
 int messageDelay = 50;
 int highBurstLength = 185;
 int lowBurstLength  = 370;
-int led = 7;
+int rf433pin = 7;
 
 void nanoSecondDelay(int d) {
   delayMicroseconds(d);
@@ -49,7 +49,7 @@ void nanoSecondDelay(int d) {
 int sendrfmsg(char* rfmsg) {
   if (wiringPiSetup () == -1) return 1;
 
-  pinMode (led, OUTPUT) ;
+  pinMode (rf433pin, OUTPUT) ;
 
   printf("Sending RF message.\n");
 
@@ -57,35 +57,35 @@ int sendrfmsg(char* rfmsg) {
     for (int i = 0; i < strlen(rfmsg); i++) {
       char b = rfmsg[i];
       if (b == 'S') {
-        digitalWrite(led, HIGH);
+        digitalWrite(rf433pin, HIGH);
         nanoSecondDelay(highBurstLength);
-        digitalWrite(led, LOW);
+        digitalWrite(rf433pin, LOW);
         nanoSecondDelay(lowBurstLength * 2);
-        digitalWrite(led, HIGH);
+        digitalWrite(rf433pin, HIGH);
         nanoSecondDelay(highBurstLength);
-        digitalWrite(led, LOW);
+        digitalWrite(rf433pin, LOW);
         nanoSecondDelay(lowBurstLength * 2);
       } else if (b == '1') {
-        digitalWrite(led, HIGH);
+        digitalWrite(rf433pin, HIGH);
         nanoSecondDelay(highBurstLength);
-        digitalWrite(led, LOW);
+        digitalWrite(rf433pin, LOW);
         nanoSecondDelay(lowBurstLength);
       } else if (b == 'L') {
-        digitalWrite(led, HIGH);
+        digitalWrite(rf433pin, HIGH);
         nanoSecondDelay(highBurstLength * 4);
-        digitalWrite(led, LOW);
+        digitalWrite(rf433pin, LOW);
         nanoSecondDelay(lowBurstLength);
-        digitalWrite(led, HIGH);
+        digitalWrite(rf433pin, HIGH);
         nanoSecondDelay(highBurstLength);
-        digitalWrite(led, LOW);
+        digitalWrite(rf433pin, LOW);
         nanoSecondDelay(lowBurstLength * 2);
       } else if (b == '0') {
-        digitalWrite(led, LOW);
+        digitalWrite(rf433pin, LOW);
         nanoSecondDelay(lowBurstLength);
       } else if (b == '2') {
-        digitalWrite(led, HIGH);
+        digitalWrite(rf433pin, HIGH);
         nanoSecondDelay(highBurstLength * 4);
-        digitalWrite(led, LOW);
+        digitalWrite(rf433pin, LOW);
         nanoSecondDelay(lowBurstLength);
       }
     }
@@ -104,7 +104,7 @@ void rf433_raw_callback(struct mosquitto *mosq, void *userdata, const struct mos
 		if (strcmp(message->topic, "home/rf433") == 0) {
 			sendrfmsg(message->payload);
 		} else if (sscanf (message->topic, "home/sensors/%d", &sensor) == 1) {
-			printf("Message %d to sensor: %s\n", sensor, message->payload);
+			printf("Message %s to sensor %d\n", sensor, message->payload);
 			if (strcmp(message->payload, "on") == 0) {
 				sendrfmsg(cmdsOn[sensor - 1]);
 			} else if (strcmp(message->payload, "off") == 0) {
