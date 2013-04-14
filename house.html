@@ -1,0 +1,25 @@
+<html>
+<body>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>
+function dostuff(sensor) {
+	status = document.getElementById('sensor' + sensor).className
+    document.getElementById('sensor' + sensor).className = (status == "on" ? "off" : "on");
+
+    $.ajax({
+      type: "GET",
+      data: "cmd=" + status,
+      url: "http://10.101.73.217:8000/sensors/" + sensor
+    });
+}
+</script>
+
+<map name="GraffleExport">
+	<area shape=poly coords="619,36,619,54,602,54,602,36,619,36" id="sensor3" class="off" href="javascript:dostuff(3);">
+	<area shape=poly coords="711,152,711,169,693,169,693,152,711,152" id="sensor2" class="off" href="javascript:dostuff(2);">
+	<area shape=poly coords="254,362,254,380,236,380,236,362,254,362" id="sensor1" class="off" href="javascript:dostuff(1);">
+</map>
+<img border=0 src="house.jpg" usemap="#GraffleExport">
+</body>
+</html>
